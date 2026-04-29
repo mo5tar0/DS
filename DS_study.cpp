@@ -828,43 +828,48 @@ protected:
     }
 
     // ================= Helper for deletion =================
-    BSTNode<T> *findMin(BSTNode<T> *node)
-    {
-        while (node && node->getLeft())
-            node = node->getLeft();
-        return node;
+  template<class T>
+void BST<T>::deleteByCopying(BSTNode<T>* &node) 
+{
+    BSTNode<T> *prev, *tmp = node;   
+
+    // Case 1: Node has NO RIGHT child
+    if (node->right == nullptr) {           
+        node = node->left;                  // Replace node with its left child
     }
 
-    BSTNode<T> *deleteNode(BSTNode<T> *node, T key)
-    {
-        if (!node)
-            return node;
+    // Case 2: Node has NO LEFT child
+    else if (node->left == nullptr) {
+        node = node->right;                 // Replace node with its right child
+    }
 
-        if (key < node->getKey())
-            node->setLeft(deleteNode(node->getLeft(), key));
+    // Case 3: Node has BOTH LEFT and RIGHT children  
+    else {
+        tmp = node->left;                   
+        prev = node;                        // prev will track parent of tmp
 
-        else if (key > node->getKey())
-            node->setRight(deleteNode(node->getRight(), key));
-
-        else
-        {
-            // Case 1: no child
-            if (!node->getLeft() && !node->getRight())
-                return nullptr;
-
-            // Case 2: one child
-            if (!node->getLeft())
-                return node->getRight();
-            if (!node->getRight())
-                return node->getLeft();
-
-            // Case 3: two children
-            BSTNode<T> *succ = findMin(node->getRight());
-            node->getKey() = succ->getKey();
-            node->setRight(deleteNode(node->getRight(), succ->getKey()));
+        // Step 2: Find the RIGHTMOST node in the left subtree
+        // (This is the Inorder Predecessor)
+        while (tmp->right != nullptr) {
+            prev = tmp;
+            tmp = tmp->right;
         }
-        return node;
+
+        // Step 3: Copy the predecessor's key into the node we want to delete
+        node->key = tmp->key;
+
+        // Step 4 & 5: Delete the predecessor (tmp)
+        if (prev == node) {
+            // This means the predecessor was the direct left child
+            prev->left = tmp->left;
+        } else {
+            // Predecessor was deeper in the right chain
+            prev->right = tmp->left;
+        }
     }
+
+    delete tmp;   // Free the memory of the deleted node
+}
 
 public:
     BST() : root(nullptr) {}
