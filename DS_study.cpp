@@ -912,15 +912,15 @@ private:
         if (node == nullptr)
             return 0;
 
-        return getHeight(node->left)
-             - getHeight(node->right);
+        return getHeight(node->left) - getHeight(node->right);
     }
 
     void updateHeight(AVLNode<T> *node)
     {
         node->height =
             max(getHeight(node->left),
-                getHeight(node->right)) + 1;
+                getHeight(node->right)) +
+            1;
     }
 
     // ================= RIGHT ROTATE =================
@@ -1193,14 +1193,233 @@ public:
 
 // ================= MAX HEAP =================
 
+template <class T>
+class MaxHeap
+{
+private:
+    T arr[100];
+    int n;
 
+    int parent(int i)
+    {
+        return (i - 1) / 2;
+    }
+
+    int left(int i)
+    {
+        return 2 * i + 1;
+    }
+
+    int right(int i)
+    {
+        return 2 * i + 2;
+    }
+
+public:
+    MaxHeap()
+    {
+        n = 0;
+    }
+
+    bool isEmpty()
+    {
+        return n == 0;
+    }
+
+    bool isFull()
+    {
+        return n == 100;
+    }
+
+    // ================= INSERT =================
+
+    void insert(T val)
+    {
+        if (isFull())
+        {
+            cout << "Overflow\n";
+            return;
+        }
+
+        int i = n;
+
+        arr[n++] = val;
+
+        while (i != 0 &&
+               arr[parent(i)] < arr[i])
+        {
+            swap(arr[i], arr[parent(i)]);
+
+            i = parent(i);
+        }
+    }
+
+    // ================= MAX HEAPIFY =================
+
+    void maxHeapify(int i)
+    {
+        int l = left(i);
+        int r = right(i);
+
+        int largest = i;
+
+        if (l < n &&
+            arr[l] > arr[largest])
+        {
+            largest = l;
+        }
+
+        if (r < n &&
+            arr[r] > arr[largest])
+        {
+            largest = r;
+        }
+
+        if (largest != i)
+        {
+            swap(arr[i], arr[largest]);
+
+            maxHeapify(largest);
+        }
+    }
+
+    // ================= EXTRACT MAX =================
+
+    T extractMax()
+    {
+        if (isEmpty())
+        {
+            cout << "Underflow\n";
+            return T();
+        }
+
+        if (n == 1)
+        {
+            n--;
+
+            return arr[0];
+        }
+
+        T root = arr[0];
+
+        arr[0] = arr[n - 1];
+
+        n--;
+
+        maxHeapify(0);
+
+        return root;
+    }
+
+     // ================= DELETE =================
+
+    void remove(int i)
+    {
+        if (i >= n)
+            return;
+
+        arr[i] = arr[0] + 1;
+
+        while (i != 0 &&
+               arr[parent(i)] < arr[i])
+        {
+            swap(arr[i], arr[parent(i)]);
+
+            i = parent(i);
+        }
+
+        extractMax();
+    }
+
+
+    // ================= GET MAX =================
+
+    T getMax()
+    {
+        return arr[0];
+    }
+
+    // ================= Build max heap =================
+
+    void buildMaxHeap()
+    {
+        for (int i = (n / 2) - 1; i >= 0; i--)
+        {
+            maxHeapify(i);
+        }
+    }
+
+    // ================= HEAP SORT =================
+    void heapSort()
+    {
+        buildMaxHeap();
+
+        for (int i = n - 1; i > 0; i--)
+        {
+            swap(arr[0], arr[i]);
+
+            n--;
+
+            maxHeapify(0);
+        }
+    }
+    // ================= Increase key =================
+    void increaseKey(int i, T newVal)
+    {
+        arr[i] = newVal;
+
+        while (i != 0 &&
+               arr[parent(i)] < arr[i])
+        {
+            swap(arr[i], arr[parent(i)]);
+
+            i = parent(i);
+        }
+    }
+
+    // ================= DISPLAY =================
+
+    void display()
+    {
+        for (int i = 0; i < n; i++)
+        {
+            cout << arr[i] << " ";
+        }
+
+        cout << endl;
+    }
+};
 
 int main()
 {
-    QueueSLL<Ticket> q;
+    // QueueSLL<Ticket> q;
 
-    q.enqueue(Ticket(1, "Ali"));
-    q.enqueue(Ticket(2, "Sara"));
+    // q.enqueue(Ticket(1, "Ali"));
+    // q.enqueue(Ticket(2, "Sara"));
 
-    q.remove(Ticket(2, "")); // compare by id
+    // q.remove(Ticket(2, "")); // compare by id
+
+    MaxHeap<int> h;
+
+    h.insert(10);
+    h.insert(40);
+    h.insert(20);
+    h.insert(50);
+    h.insert(5);
+
+    h.display();
+
+    cout << h.extractMax() << endl;
+
+    h.display();
+
+    cout << h.getMax() << endl;
+
+    h.remove(1);
+
+    h.display();
+
+    h.heapSort();
+
+    h.display();
 }
