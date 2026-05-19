@@ -872,6 +872,329 @@ public:
     }
 };
 
+// ================= AVL NODE =================
+
+template <class T>
+class AVLNode
+{
+public:
+    T data;
+    AVLNode<T> *left;
+    AVLNode<T> *right;
+    int height;
+
+    AVLNode(T val)
+    {
+        data = val;
+        left = right = nullptr;
+        height = 1;
+    }
+};
+
+// ================= AVL TREE =================
+
+template <class T>
+class AVL
+{
+private:
+    AVLNode<T> *root;
+
+    int getHeight(AVLNode<T> *node)
+    {
+        if (node == nullptr)
+            return 0;
+
+        return node->height;
+    }
+
+    int getBalance(AVLNode<T> *node)
+    {
+        if (node == nullptr)
+            return 0;
+
+        return getHeight(node->left)
+             - getHeight(node->right);
+    }
+
+    void updateHeight(AVLNode<T> *node)
+    {
+        node->height =
+            max(getHeight(node->left),
+                getHeight(node->right)) + 1;
+    }
+
+    // ================= RIGHT ROTATE =================
+
+    AVLNode<T> *rightRotate(AVLNode<T> *y)
+    {
+        AVLNode<T> *x = y->left;
+        AVLNode<T> *t2 = x->right;
+
+        x->right = y;
+        y->left = t2;
+
+        updateHeight(y);
+        updateHeight(x);
+
+        return x;
+    }
+
+    // ================= LEFT ROTATE =================
+
+    AVLNode<T> *leftRotate(AVLNode<T> *x)
+    {
+        AVLNode<T> *y = x->right;
+        AVLNode<T> *t2 = y->left;
+
+        y->left = x;
+        x->right = t2;
+
+        updateHeight(x);
+        updateHeight(y);
+
+        return y;
+    }
+
+    // ================= INSERT =================
+
+    AVLNode<T> *insert(AVLNode<T> *node, T val)
+    {
+        if (node == nullptr)
+            return new AVLNode<T>(val);
+
+        if (val < node->data)
+            node->left = insert(node->left, val);
+
+        else if (val > node->data)
+            node->right = insert(node->right, val);
+
+        else
+            return node;
+
+        updateHeight(node);
+
+        int balance = getBalance(node);
+
+        // LL
+
+        if (balance > 1 &&
+            val < node->left->data)
+        {
+            return rightRotate(node);
+        }
+
+        // RR
+
+        if (balance < -1 &&
+            val > node->right->data)
+        {
+            return leftRotate(node);
+        }
+
+        // LR
+
+        if (balance > 1 &&
+            val > node->left->data)
+        {
+            node->left = leftRotate(node->left);
+
+            return rightRotate(node);
+        }
+
+        // RL
+
+        if (balance < -1 &&
+            val < node->right->data)
+        {
+            node->right = rightRotate(node->right);
+
+            return leftRotate(node);
+        }
+
+        return node;
+    }
+
+    // ================= MIN VALUE =================
+
+    AVLNode<T> *minValue(AVLNode<T> *node)
+    {
+        while (node->left != nullptr)
+            node = node->left;
+
+        return node;
+    }
+
+    // ================= REMOVE =================
+
+    AVLNode<T> *remove(AVLNode<T> *node, T val)
+    {
+        if (node == nullptr)
+            return nullptr;
+
+        if (val < node->data)
+            node->left = remove(node->left, val);
+
+        else if (val > node->data)
+            node->right = remove(node->right, val);
+
+        else
+        {
+            // no child
+
+            if (node->left == nullptr &&
+                node->right == nullptr)
+            {
+                delete node;
+
+                return nullptr;
+            }
+
+            // one child
+
+            else if (node->left == nullptr)
+            {
+                AVLNode<T> *temp = node->right;
+
+                delete node;
+
+                node = temp;
+            }
+
+            else if (node->right == nullptr)
+            {
+                AVLNode<T> *temp = node->left;
+
+                delete node;
+
+                node = temp;
+            }
+
+            // two children
+
+            else
+            {
+                AVLNode<T> *temp =
+                    minValue(node->right);
+
+                node->data = temp->data;
+
+                node->right =
+                    remove(node->right,
+                           temp->data);
+            }
+        }
+
+        if (node == nullptr)
+            return nullptr;
+
+        updateHeight(node);
+
+        int balance = getBalance(node);
+
+        // LL
+
+        if (balance > 1 &&
+            getBalance(node->left) >= 0)
+        {
+            return rightRotate(node);
+        }
+
+        // LR
+
+        if (balance > 1 &&
+            getBalance(node->left) < 0)
+        {
+            node->left =
+                leftRotate(node->left);
+
+            return rightRotate(node);
+        }
+
+        // RR
+
+        if (balance < -1 &&
+            getBalance(node->right) <= 0)
+        {
+            return leftRotate(node);
+        }
+
+        // RL
+
+        if (balance < -1 &&
+            getBalance(node->right) > 0)
+        {
+            node->right =
+                rightRotate(node->right);
+
+            return leftRotate(node);
+        }
+
+        return node;
+    }
+
+    // ================= SEARCH =================
+
+    bool search(AVLNode<T> *node, T val)
+    {
+        if (node == nullptr)
+            return false;
+
+        if (node->data == val)
+            return true;
+
+        if (val < node->data)
+            return search(node->left, val);
+
+        return search(node->right, val);
+    }
+
+    // ================= INORDER =================
+
+    void inorder(AVLNode<T> *node)
+    {
+        if (node == nullptr)
+            return;
+
+        inorder(node->left);
+
+        cout << node->data << " ";
+
+        inorder(node->right);
+    }
+
+public:
+    AVL()
+    {
+        root = nullptr;
+    }
+
+    void insert(T val)
+    {
+        root = insert(root, val);
+    }
+
+    void remove(T val)
+    {
+        root = remove(root, val);
+    }
+
+    bool search(T val)
+    {
+        return search(root, val);
+    }
+
+    void inorder()
+    {
+        inorder(root);
+
+        cout << endl;
+    }
+};
+
+// ================= MAX HEAP =================
+
+
+
 int main()
 {
     QueueSLL<Ticket> q;
