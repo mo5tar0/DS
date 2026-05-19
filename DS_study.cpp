@@ -29,8 +29,8 @@ void selectionsort(int arr[], int n)
             {
                 least = j;
             }
-            swap(arr[least], arr[i]);
         }
+        swap(arr[least], arr[i]);
     }
 }
 //    bubble sort
@@ -164,56 +164,9 @@ void radixsort(int arr[], int n)
     for (int exp = 1; m / exp > 0; exp *= 10)
         countsort(arr, n, exp);
 }
-// #include <stack>
-// int binarytodecimal(int n)
-// {
-//     stack<int> s;
-
-//     while (n > 0)
-//     {
-//         int digit = n % 10;
-
-//         if (digit != 0 && digit != 1)
-//         {
-//             cout << "Invalid binary number";
-//             return -1;
-//         }
-
-//         s.push(digit);
-//         n /= 10;
-//     }
-
-//     int decimal = 0;
-
-//     while (!s.empty())
-//     {
-//         decimal = decimal * 2 + s.top();
-//         s.pop();
-//     }
-
-//     return decimal;
-// }
-
-// find the maximum product of two integers in an array
-int maxproduct(int arr[], int n)
-{
-    int max1 = arr[0], max2 = arr[1];
-    for (int i = 2; i < n; i++)
-    {
-        if (arr[i] > max1)
-        {
-            max2 = max1;
-            max1 = arr[i];
-        }
-        else if (arr[i] > max2)
-        {
-            max2 = arr[i];
-        }
-    }
-    return max1 * max2;
-}
 
 //    linked list
+
 class Node
 {
 public:
@@ -306,6 +259,9 @@ public:
         temp->next = newNode;
     }
 };
+
+// Stack using SLL
+
 class node
 {
 public:
@@ -354,100 +310,6 @@ public:
     }
 };
 
-class queue
-{
-private:
-    node *head, *tail;
-
-public:
-    queue()
-    {
-        head = tail = nullptr;
-    }
-    void enqueue(int x)
-    {
-        node *temp = new node();
-        temp->data = x;
-        temp->next = nullptr;
-        if (tail)
-        {
-            tail->next = temp;
-        }
-        tail = temp;
-        if (!head)
-        {
-            head = tail;
-        }
-    }
-    void dequeue()
-    {
-        if (!head)
-        {
-            cout << "Queue underflow" << endl;
-            return;
-        }
-        node *temp = head;
-        head = head->next;
-        delete temp;
-        if (!head)
-        {
-            tail = nullptr;
-        }
-    }
-    int front()
-    {
-        if (!head)
-        {
-            cout << "Queue is empty" << endl;
-            return -1;
-        }
-        return head->data;
-    }
-};
-
-void print(stack s)
-{
-    while (s.first() != -1)
-    {
-        cout << s.first() << " ";
-        s.pop();
-    }
-    cout << endl;
-}
-int postfix(string s)
-{
-    stack st;
-    for (int i = 0; i < s.length(); i++)
-    {
-        if (s[i] >= '0' && s[i] <= '9')
-        {
-            st.push(s[i] - '0');
-        }
-        else
-        {
-            int op2 = st.first();
-            st.pop();
-            int op1 = st.first();
-            st.pop();
-            switch (s[i])
-            {
-            case '+':
-                st.push(op1 + op2);
-                break;
-            case '-':
-                st.push(op1 - op2);
-                break;
-            case '*':
-                st.push(op1 * op2);
-                break;
-            case '/':
-                st.push(op1 / op2);
-                break;
-            }
-        }
-    }
-    return st.first();
-}
 // Queue Array based
 template <class T, int size = 100>
 class Queue
@@ -503,7 +365,9 @@ public:
         return arr[front];
     }
 };
+
 // circular queue
+
 template <class T, int size = 100>
 class circularQueue
 {
@@ -570,6 +434,7 @@ public:
         return arr[front];
     }
 };
+
 // queue using SLL
 
 // ================= Generic Node2 =================
@@ -693,7 +558,9 @@ public:
         cout << "Element not found\n";
     }
 };
+
 // Priority Queue using array
+
 template <class T, int size = 100>
 class PriorityQueue
 {
@@ -767,6 +634,7 @@ public:
 };
 
 // Trees
+
 template <class T>
 class BSTNode
 {
@@ -827,49 +695,55 @@ protected:
         cout << node->getKey() << " ";
     }
 
-    // ================= Helper for deletion =================
-  template<class T>
-void BST<T>::deleteByCopying(BSTNode<T>* &node) 
-{
-    BSTNode<T> *prev, *tmp = node;   
+    template <class T>
+    void BST<T>::deleteByCopying(BSTNode<T> *&node)
+    {
+        BSTNode<T> *prev, *tmp = node;
 
-    // Case 1: Node has NO RIGHT child
-    if (node->right == nullptr) {           
-        node = node->left;                  // Replace node with its left child
-    }
-
-    // Case 2: Node has NO LEFT child
-    else if (node->left == nullptr) {
-        node = node->right;                 // Replace node with its right child
-    }
-
-    // Case 3: Node has BOTH LEFT and RIGHT children  
-    else {
-        tmp = node->left;                   
-        prev = node;                        // prev will track parent of tmp
-
-        // Step 2: Find the RIGHTMOST node in the left subtree
-        // (This is the Inorder Predecessor)
-        while (tmp->right != nullptr) {
-            prev = tmp;
-            tmp = tmp->right;
+        // Case 1: Node has NO RIGHT child
+        if (node->right == nullptr)
+        {
+            node = node->left; // Replace node with its left child
         }
 
-        // Step 3: Copy the predecessor's key into the node we want to delete
-        node->key = tmp->key;
-
-        // Step 4 & 5: Delete the predecessor (tmp)
-        if (prev == node) {
-            // This means the predecessor was the direct left child
-            prev->left = tmp->left;
-        } else {
-            // Predecessor was deeper in the right chain
-            prev->right = tmp->left;
+        // Case 2: Node has NO LEFT child
+        else if (node->left == nullptr)
+        {
+            node = node->right; // Replace node with its right child
         }
-    }
 
-    delete tmp;   // Free the memory of the deleted node
-}
+        // Case 3: Node has BOTH LEFT and RIGHT children
+        else
+        {
+            tmp = node->left;
+            prev = node; // prev will track parent of tmp
+
+            // Step 2: Find the RIGHTMOST node in the left subtree
+            // (This is the Inorder Predecessor)
+            while (tmp->right != nullptr)
+            {
+                prev = tmp;
+                tmp = tmp->right;
+            }
+
+            // Step 3: Copy the predecessor's key into the node we want to delete
+            node->key = tmp->key;
+
+            // Step 4 & 5: Delete the predecessor (tmp)
+            if (prev == node)
+            {
+                // This means the predecessor was the direct left child
+                prev->left = tmp->left;
+            }
+            else
+            {
+                // Predecessor was deeper in the right chain
+                prev->right = tmp->left;
+            }
+        }
+
+        delete tmp; // Free the memory of the deleted node
+    }
 
 public:
     BST() : root(nullptr) {}
