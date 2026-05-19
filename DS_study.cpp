@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+#include <queue>
 // insertion sort
 void insertionsort(int arr[], int n)
 {
@@ -695,8 +696,8 @@ protected:
         cout << node->getKey() << " ";
     }
 
-    template <class T>
-    void BST<T>::deleteByCopying(BSTNode<T> *&node)
+    // ================= DELETE NODE BY COPYING =================
+    void deleteByCopying(BSTNode<T> *&node)
     {
         BSTNode<T> *prev, *tmp = node;
 
@@ -1311,7 +1312,7 @@ public:
         return root;
     }
 
-     // ================= DELETE =================
+    // ================= DELETE =================
 
     void remove(int i)
     {
@@ -1330,7 +1331,6 @@ public:
 
         extractMax();
     }
-
 
     // ================= GET MAX =================
 
@@ -1352,6 +1352,7 @@ public:
     // ================= HEAP SORT =================
     void heapSort()
     {
+        int original_n = n;
         buildMaxHeap();
 
         for (int i = n - 1; i > 0; i--)
@@ -1362,6 +1363,7 @@ public:
 
             maxHeapify(0);
         }
+        n = original_n;
     }
     // ================= Increase key =================
     void increaseKey(int i, T newVal)
