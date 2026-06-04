@@ -134,39 +134,73 @@ void quicksort(int arr[], int low, int high)
     }
 }
 
-// radix sort
-int getmax(int arr[], int n)
+void countSort(int A[], int n, int k)
 {
-    int mx = arr[0];
-    for (int i = 1; i < n; i++)
-        if (arr[i] > mx)
-            mx = arr[i];
-    return mx;
-}
-void countsort(int arr[], int n, int exp)
-{
-    int *output = new int[n];
-    int count[10] = {0};
-    for (int i = 0; i < n; i++)
-        count[(arr[i] / exp) % 10]++;
-    for (int i = 1; i < 10; i++)
-        count[i] += count[i - 1];
-    for (int i = n - 1; i >= 0; i--)
+    int *B = new int[n];
+    int *C = new int[k + 1];
+
+    // Initialize C
+    for (int i = 0; i <= k; i++)
+        C[i] = 0;
+
+    // Count occurrences
+    for (int j = 0; j < n; j++)
+        C[A[j]]++;
+
+    // Cumulative sums
+    for (int i = 1; i <= k; i++)
+        C[i] += C[i - 1];
+
+    // Build output array (stable)
+    for (int j = n - 1; j >= 0; j--)
     {
-        output[count[(arr[i] / exp) % 10] - 1] = arr[i];
-        count[(arr[i] / exp) % 10]--;
+        B[C[A[j]] - 1] = A[j];
+        C[A[j]]--;
     }
+
+    // Copy back
     for (int i = 0; i < n; i++)
-        arr[i] = output[i];
+        A[i] = B[i];
+
+    delete[] B;
+    delete[] C;
 }
-void radixsort(int arr[], int n)
+// radix sort
+void radixSort(int A[], int n)
 {
-    int m = getmax(arr, n);
-    for (int exp = 1; m / exp > 0; exp *= 10)
-        countsort(arr, n, exp);
+    int max = A[0];
+
+    for (int i = 1; i < n; i++)
+        if (A[i] > max)
+            max = A[i];
+
+    for (int exp = 1; max / exp > 0; exp *= 10)
+    {
+        int B[n];
+        int C[10] = {0};
+
+        // Count digits
+        for (int i = 0; i < n; i++)
+            C[(A[i] / exp) % 10]++;
+
+        // Prefix sums
+        for (int i = 1; i < 10; i++)
+            C[i] += C[i - 1];
+
+        // Build output
+        for (int i = n - 1; i >= 0; i--)
+        {
+            B[C[(A[i] / exp) % 10] - 1] = A[i];
+            C[(A[i] / exp) % 10]--;
+        }
+
+        // Copy back
+        for (int i = 0; i < n; i++)
+            A[i] = B[i];
+    }
 }
 
-//    linked list
+// linked list
 
 class Node
 {
