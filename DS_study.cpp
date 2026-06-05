@@ -841,6 +841,23 @@ public:
     void postorder() { postorder(root); }
 
     // ================= DELETE =================
+    BSTNode<T>* deleteNode(BSTNode<T>* node, T key)
+{
+    if (!node)
+        return nullptr;
+
+    if (key < node->getKey())
+        node->setLeft(deleteNode(node->getLeft(), key));
+
+    else if (key > node->getKey())
+        node->setRight(deleteNode(node->getRight(), key));
+
+    else
+        deleteByCopying(node);
+
+    return node;
+}
+
     void remove(T key)
     {
         root = deleteNode(root, key);
