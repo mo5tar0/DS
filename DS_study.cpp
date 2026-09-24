@@ -1,6 +1,8 @@
 #include <iostream>
 using namespace std;
 #include <queue>
+#include <list> 
+#include <vector>
 // insertion sort
 void insertionsort(int arr[], int n)
 {
@@ -1443,6 +1445,61 @@ public:
     }
 };
 
+
+
+
+
+class HashTable {
+private:
+    int size;
+    vector<list<pair<int, string>>> table;
+
+    int hashFunction(int key) {
+        return key % size;
+    }
+
+public:
+    HashTable(int s) {
+        size = s;
+        table.resize(size);
+    }
+
+    void insert(int key, string value) {
+        int index = hashFunction(key);
+
+        for (auto &item : table[index]) {
+            if (item.first == key) {
+                item.second = value;
+                return;
+            }
+        }
+
+        table[index].push_back({key, value});
+    }
+
+    string search(int key) {
+        int index = hashFunction(key);
+
+        for (auto &item : table[index]) {
+            if (item.first == key)
+                return item.second;
+        }
+
+        return "Not Found";
+    }
+
+    void remove(int key) {
+        int index = hashFunction(key);
+
+        for (auto it = table[index].begin(); it != table[index].end(); ++it) {
+            if (it->first == key) {
+                table[index].erase(it);
+                return;
+            }
+        }
+    }
+};
+
 int main()
 {
     // QueueSLL<Ticket> q;
@@ -1452,27 +1509,40 @@ int main()
 
     // q.remove(Ticket(2, "")); // compare by id
 
-    MaxHeap<int> h;
+    // MaxHeap<int> h;
 
-    h.insert(10);
-    h.insert(40);
-    h.insert(20);
-    h.insert(50);
-    h.insert(5);
+    // h.insert(10);
+    // h.insert(40);
+    // h.insert(20);
+    // h.insert(50);
+    // h.insert(5);
 
-    h.display();
+    // h.display();
 
-    cout << h.extractMax() << endl;
+    // cout << h.extractMax() << endl;
 
-    h.display();
+    // h.display();
 
-    cout << h.getMax() << endl;
+    // cout << h.getMax() << endl;
 
-    h.remove(1);
+    // h.remove(1);
 
-    h.display();
+    // h.display();
 
-    h.heapSort();
+    // h.heapSort();
 
-    h.display();
+    // h.display();
+
+
+    HashTable ht(10);
+
+    ht.insert(101, "Ahmed");
+    ht.insert(202, "Ali");
+    ht.insert(303, "Omar");
+
+    cout << ht.search(202) << endl;
+
+    ht.remove(202);
+
+    cout << ht.search(202) << endl;
 }
